@@ -6,7 +6,7 @@
 /*   By: omatyko <omatyko@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/07 15:39:59 by omatyko           #+#    #+#             */
-/*   Updated: 2024/08/08 17:18:04 by omatyko          ###   ########.fr       */
+/*   Updated: 2024/08/14 12:57:18 by omatyko          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,5 +23,5 @@ int	ft_strcmp(char *s1, char *s2)
 			return (s1[i] - s2[i]);
 		i++;
 	}
-	return (0);
+	return (s1[i] - s2[i]);
 }

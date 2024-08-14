@@ -5,23 +5,25 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: omatyko <omatyko@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/08 18:57:14 by omatyko           #+#    #+#             */
-/*   Updated: 2024/08/08 19:00:01 by omatyko          ###   ########.fr       */
+/*   Created: 2024/08/14 13:57:18 by omatyko           #+#    #+#             */
+/*   Updated: 2024/08/14 13:58:25 by omatyko          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 char	*ft_strcat(char *dest, char *src)
 {
-	while (*dest != '\0')
+	unsigned int	i;
+	unsigned int	dest_len;
+
+	i = 0;
+	dest_len = 0;
+	while (dest[dest_len] != '\0')
+		dest_len++;
+	while (src[i] != '\0')
 	{
-		dest++;
+		dest[dest_len + i] = src[i];
+		i++;
 	}
-	while (*src)
-	{
-		*dest = *src;
-		dest++;
-		src++;
-	}
-	*dest = '\0';
+	dest[dest_len + i] = '\0';
 	return (dest);
 }
