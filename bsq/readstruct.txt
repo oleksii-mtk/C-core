@@ -1,0 +1,102 @@
+#include <unistd.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <stdio.h>
+
+typedef struct {
+    int rows;
+    int cols;
+    char empty;
+    char obstacle;
+    char full;
+    char **map;
+} MapInfo;
+
+MapInfo *create_map_from_file(const char *filename) {
+    int fd = open(filename, O_RDONLY);
+    if (fd < 0) {
+        write(STDERR_FILENO, "error: cannot open file\n", 24);
+        return NULL;
+    }
+
+    char buffer[1024];
+    int bytes_read = 0;
+    int index = 0;
+    
+    // Считываем первую строку
+    while ((bytes_read = read(fd, &buffer[index], 1)) > 0 && buffer[index] != '\n') {
+        index++;
+    }
+    buffer[index] = '\0';
+
+    // Разбираем первую строку
+    MapInfo *map_info = (MapInfo *)malloc(sizeof(MapInfo));
+    map_info->rows = atoi(buffer);   // Преобразование строки в целое число
+    map_info->empty = buffer[2];     // Символ пустоты
+    map_info->obstacle = buffer[3];  // Символ препятствия
+    map_info->full = buffer[4];      // Символ заполнения
+
+    // Выделяем память для хранения строк карты
+    map_info->map = (char **)malloc(map_info->rows * sizeof(char *));
+    
+    int row_count = 0;
+    while (row_count < map_info->rows) {
+        index = 0;
+        
+        while ((bytes_read = read(fd, &buffer[index], 1)) > 0 && buffer[index] != '\n') {
+            index++;
+        }
+        
+        if (bytes_read == 0) break; // Конец файла
+        
+        buffer[index] = '\0';
+        map_info->cols = index; // Устанавливаем количество колонок
+        
+        map_info->map[row_count] = (char *)malloc((index + 1) * sizeof(char));
+        
+        int col = 0;
+        while (col < index) {
+            map_info->map[row_count][col] = buffer[col];
+            col++;
+        }
+        map_info->map[row_count][col] = '\0';
+        
+        row_count++;
+    }
+
+    // Если в файле больше строк, чем указано в rows, выводим ошибку
+    if (read(fd, buffer, 1) > 0) {
+        write(STDERR_FILENO, "map error\n", 10);
+        free_map(map_info);
+        close(fd);
+        return NULL;
+    }
+
+    close(fd);
+    return map_info;
+}
+
+void free_map(MapInfo *map_info) {
+    for (int i = 0; i < map_info->rows; i++) {
+        free(map_info->map[i]);
+    }
+    free(map_info->map);
+    free(map_info);
+}
+
+int main() {
+    MapInfo *map_info = create_map_from_file("/mnt/data/input.txt");
+
+    if (map_info != NULL) {
+        // Вывод карты на экран
+        for (int i = 0; i < map_info->rows; i++) {
+            write(STDOUT_FILENO, map_info->map[i], map_info->cols);
+            write(STDOUT_FILENO, "\n", 1);
+        }
+
+        // Освобождение памяти
+        free_map(map_info);
+    }
+
+    return 0;
+}
