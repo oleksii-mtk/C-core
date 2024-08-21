@@ -81,6 +81,7 @@ int	can_place_square(s_mapinfo *map_info, int i, int j, int step)
 		y = j;
 		while (y < j + step)
 		{
+			printf("%c [%d][%d][%c]\n",map_info->obstacle, x,y, map_info->map[x][y] );
 			if (map_info->map[x][y] == map_info->obstacle)
 			{
 				return (0);
@@ -100,6 +101,8 @@ void	find_max_square(s_mapinfo *map_info, int *i_max, int *j_max,
 	int	j;
 
 	*step_max = 0;
+	printf("%d\n",map_info->rows );	
+	i = 0;
 	while (i < map_info->rows)
 	{
 		j = 0;
@@ -108,8 +111,11 @@ void	find_max_square(s_mapinfo *map_info, int *i_max, int *j_max,
 			step = 1;
 			while (can_place_square(map_info, i, j, step))
 			{
+//				printf("i=%d j=%d step=%d\n", i, j, step);
 				if (step > *step_max)
 				{
+					printf("i=%d j=%d step=%d\n", i, j, step);
+
 					*step_max = step;
 					*i_max = i;
 					*j_max = j;
@@ -171,9 +177,9 @@ s_mapinfo *create_map_from_file(const char *filename) {
     
     s_mapinfo *map_info = (s_mapinfo *)malloc(sizeof(s_mapinfo));
     map_info->rows = atoi(buffer);   
-    map_info->empty = buffer[2];     
-    map_info->obstacle = buffer[3];  
-    map_info->full = buffer[4];      
+    map_info->empty = buffer[1];     
+    map_info->obstacle = buffer[2];  
+    map_info->full = buffer[3];      
 
     
     map_info->map = (char **)malloc(map_info->rows * sizeof(char *));
@@ -237,12 +243,12 @@ int	main(void)
         
 	print_map(map_info);
 	find_max_square(map_info, &i_max, &j_max, &step_max);
-	printf("%d %d %d ", i_max, j_max, step_max);
+//	printf("%d %d %d ", i_max, j_max, step_max);
 
-       // fill_square(map_info, i_max, j_max, step_max);
+        fill_square(map_info, i_max, j_max, step_max);
 	//printf("%d %d %d ", i_max, j_max, step_max);
 
-	//print_map(map_info);
+	print_map(map_info);
 
         free_map(map_info);
     }
